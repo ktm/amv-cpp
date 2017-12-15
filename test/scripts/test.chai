@@ -1,0 +1,3 @@
+var gpsPort = "/dev/ttyUSB0"
+var gpsFD = serialInit(gpsPort)
+sleep(10)

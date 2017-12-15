@@ -1,0 +1,25 @@
+print ("begin")
+
+class AMV  {
+    var servoFD
+
+    def onTimer(str) {
+       print("onTimer");
+
+//       serialWrite(this.servoFD, "XXXX")
+       return "onTimer Done"
+    }
+
+   def AMV() {
+      var servoPort = "/dev/ttyACM0";
+      this.servoFD = "....";
+//    this.servoFD = serialInit(servoPort)
+
+      writeContext("servoFD", this.servoFD);
+   }
+}
+
+var amv = AMV();
+
+print("done")
+

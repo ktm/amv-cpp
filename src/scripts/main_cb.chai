@@ -1,0 +1,19 @@
+print ("begin")
+
+class AMV  {
+
+    def onTimer(str) {
+       print("onTimer");
+       return str;
+    }
+
+    def AMV() {
+    }
+}
+
+
+var amv = AMV();
+
+
+print("done");
+

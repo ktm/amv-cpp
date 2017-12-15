@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:amv="http://www.gumballsoftware.com/amv" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://sourceforge.net/bpmn/definitions/_1420394188414" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yaoqiang="http://bpmn.sourceforge.net" exporter="Yaoqiang BPMN Editor" exporterVersion="4.0" expressionLanguage="http://www.w3.org/1999/XPath" id="_1420394188414" name="Steering" targetNamespace="http://sourceforge.net/bpmn/definitions/_1420394188414" typeLanguage="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+  <signal id="setSteeringSignalID" name="setSteering"/>
+  <signal id="missionStartSignalID" name="missionStart"/>
+  <signal id="missionStopSignalID" name="missionStop"/>
+  <process id="LOCATION_PROCESS" isClosed="false" isExecutable="true" processType="None">
+
+    <serviceTask activiti:expression="#{serialPortManager.writeCommand('steeringHandle', 'navCourse')}" completionQuantity="1" id="setSteeringServoTaskID" implementation="##WebService" isForCompensation="false" name="setSteeringServo" startQuantity="1">
+      <incoming>goToSetSteeringServoID</incoming>
+      <outgoing>_12</outgoing>
+    </serviceTask>
+    <sequenceFlow id="goToInitCommID" sourceRef="missionStartEventID" targetRef="initCommTaskID"/>
+    <serviceTask activiti:expression="#{serialPortManager.connectToDevice('steeringHandle', '/dev/ttyACM0')}" activiti:resultVariable="steeringHandle" completionQuantity="1" id="initCommTaskID" implementation="##WebService" isForCompensation="false" name="initComm" startQuantity="1">
+      <incoming>goToInitCommID</incoming>
+      <outgoing>goToSteerLoopID</outgoing>
+    </serviceTask>
+    <sequenceFlow id="goToSteerLoopID" sourceRef="initCommTaskID" targetRef="catchCourseChangeEventID"/>
+    <sequenceFlow id="goToSetSteeringServoID" sourceRef="catchCourseChangeEventID" targetRef="setSteeringServoTaskID"/>
+    <intermediateCatchEvent id="catchCourseChangeEventID" name="Wait for Course Change" parallelMultiple="false">
+      <incoming>stopEvent1ID</incoming>
+      <incoming>goToSteerLoopID</incoming>
+      <incoming>_12</incoming>
+      <outgoing>goToSetSteeringServoID</outgoing>
+      <signalEventDefinition id="steeringSignalEventDefinition" signalRef="setSteeringSignalID"/>
+    </intermediateCatchEvent>
+    <startEvent id="missionStartEventID" isInterrupting="true" name="Mission Started" parallelMultiple="false">
+      <outgoing>goToInitCommID</outgoing>
+      <signalEventDefinition id="missionStartSignal" signalRef="missionStartSignalID"/>
+    </startEvent>
+    <sequenceFlow id="_12" sourceRef="setSteeringServoTaskID" targetRef="catchCourseChangeEventID"/>
+  </process>
+
+</definitions>

@@ -1,0 +1,42 @@
+print("begin gps.chai")
+var gpsPort = "/dev/ttyUSB0"
+print("gpsPort: " + gpsPort)
+
+var gpsFD = initGPS(gpsPort)
+
+print("gpsFD: ")
+print(gpsFD)
+
+writeContext("gpsFD", gpsFD)
+
+
+var gpsLock = false;
+var gpsTriesLeft = 5;
+
+while ( (gpsLock == false) && (gpsTriesLeft > 0) ){
+    print(gpsTriesLeft);
+    updateGPS(gpsFD);
+    var objects = get_objects();
+    if (objects.count("gps_latitude") > 0) {
+        gpsLock = true;
+    }
+    gpsTriesLeft = (gpsTriesLeft - 1);
+}
+
+if (gpsLock) {
+    print("lat: ")
+    print(gps_latitude)
+    print("long: ")
+    print(gps_longitude)
+    print("alt: ")
+    print(gps_altitude)
+    print("speed: ")
+    print(gps_speed)
+    print("course: ")
+    print(gps_course)
+}
+
+
+
+print("done")
+
