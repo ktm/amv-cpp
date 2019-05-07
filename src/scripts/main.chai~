@@ -1,3 +1,0 @@
-var gpsPort = "/dev/ttyUSB0"
-var gpsFD = serialInit(gpsPort)
-writeContext('gpsFD', gpsFD)
